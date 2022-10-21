@@ -37,38 +37,47 @@ function App() {
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const testRef = useRef<HTMLDivElement>(null);
-
+  // [height, setheight] = useState();
+  let currentWidth = canvasRef.current?.clientWidth;
+  [currentWidth, setCurrentWidth] = useState();
+  const height = canvasRef.current?.clientHeight;
   useEffect(() => {
     if (canvasRef.current) setCtx(canvasRef.current.getContext("2d"));
     // if(canvasRef.current)setCtx(canvasRef.current.getBoundingClientRect())
   }, [canvasRef]);
+  useEffect(() => {
+    const handler = (e: UIEvent) => {
+    
+    };
 
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
   const clickHandler = useCallback(
     (e: MouseEvent<HTMLCanvasElement>) => {
       e.preventDefault();
       if (!ctx) return;
       const bounding = canvasRef.current?.getBoundingClientRect();
-      const x = (e.pageX - bounding!.x)/3;
-      const y = (e.pageY - bounding!.y)/3;
+      const x = (e.clientX - bounding!.left)-1;
+      const y = (e.clientY - bounding!.top)-1;
       // alert(`Clicked at ${x} ${y}`);
-      ctx.fillRect(x, y, 10, 10);
+      ctx.fillRect(x, y, 2, 2);
     },
     [ctx]
   );
-
-  // useEffect(() => {
-  //   if (!ctx) return;
-
-  //   ctx.fillRect(10, 10, 40, 40);
-  //   ctx.strokeRect(50, 50, 100, 100);
-  // }, [ctx]);
-
+  // const mouseMoove = useCallback (
+  //   (e: MouseEvent<>)
+  // )
+  // if(!clickHandler)
   return (
     <S.Wrapper ref={testRef}>
       <GlobalStyle />
       <canvas
         ref={canvasRef}
         onClick={clickHandler}
+        onMouseMove={clickHandler}
+        width={width}
+        height={height}
         onContextMenu={() => {}}
       ></canvas>
       <button>{"collapse lines"}</button>
